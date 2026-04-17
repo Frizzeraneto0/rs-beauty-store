@@ -1,14 +1,18 @@
-# Ativar rewrite
 RewriteEngine On
 
-# 🔒 Bloquear acesso às pastas sensíveis
+# 🔒 Bloquear pastas sensíveis
 RewriteRule ^(app|config)(/|$) - [F,L]
 
-# 🌐 Fazer /public virar raiz (sem precisar /public na URL)
+# 🚫 Evitar loop com /public
 RewriteCond %{REQUEST_URI} !^/public/
+
+# 🎯 Acessar /painel-admin sem /public
+RewriteRule ^painel-admin/(.*)$ public/painel-admin/$1 [L]
+
+# 🌐 Demais arquivos vão para /public
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ public/$1 [L]
 
-# 🧭 Se acessar só o domínio, ir pro /public
+# 🧭 Raiz do site
 RewriteRule ^$ public/ [L]
