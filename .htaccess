@@ -1,0 +1,14 @@
+# Ativar rewrite
+RewriteEngine On
+
+# 🔒 Bloquear acesso às pastas sensíveis
+RewriteRule ^(app|config)(/|$) - [F,L]
+
+# 🌐 Fazer /public virar raiz (sem precisar /public na URL)
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ public/$1 [L]
+
+# 🧭 Se acessar só o domínio, ir pro /public
+RewriteRule ^$ public/ [L]
