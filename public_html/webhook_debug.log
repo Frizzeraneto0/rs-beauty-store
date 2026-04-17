@@ -1,0 +1,15 @@
+[2026-03-26 02:52:24] === WEBHOOK RECEBIDO ===
+[2026-03-26 02:52:24] Method: POST
+[2026-03-26 02:52:24] Content-Type: application/json
+[2026-03-26 02:52:24] Raw body: {"id":"log_PUZAemmzapNPNS43rHX3yChj","event":"billing.paid","data":{"billing":{"id":"bill_u4c5ZGm2g1KKBxMuFTLJrfRm","amount":3600,"customer":{"id":"cust_y2Tw1dgHnJAh4SbuLKnqHxHG","metadata":{"name":"teste","cellphone":"27992682847","taxId":"19794695718","email":"frizzeraneto0@gmail.com","country":"","zipCode":""}},"frequency":"ONE_TIME","kind":["PIX"],"status":"PAID","products":[{"publicId":"prod_rJJmTgmKy0yBAs1KZ0JGrF4T","externalId":"https://rs-beauty-store.com/produto.php?id=6","quantity":3}],"paidAmount":0,"couponsUsed":[]},"payment":{"amount":3600,"fee":80,"method":"PIX"}},"devMode":true}
+[2026-03-26 02:52:24] event=billing.paid | billingId=bill_u4c5ZGm2g1KKBxMuFTLJrfRm | externalId=
+[2026-03-26 02:52:24] ERRO: externalId não reconhecido: ''
+[2026-03-26 02:56:13] === WEBHOOK RECEBIDO ===
+[2026-03-26 02:56:13] Raw body: {"id":"log_ptHrebeKHTWuex4GtsPzsd3n","event":"billing.paid","data":{"billing":{"id":"bill_RyMM2Y6pzsKjP4ms2tUrsHjY","amount":3000,"customer":{"id":"cust_y2Tw1dgHnJAh4SbuLKnqHxHG","metadata":{"name":"teste","cellphone":"27992682847","taxId":"19794695718","email":"frizzeraneto0@gmail.com","country":"","zipCode":""}},"frequency":"ONE_TIME","kind":["PIX"],"status":"PAID","products":[{"publicId":"prod_NdAa6ANS2bkgsBueexGxeNCc","externalId":"https://rs-beauty-store.com/produto.php?id=7","quantity":3}],"paidAmount":0,"couponsUsed":[]},"payment":{"amount":3000,"fee":80,"method":"PIX"}},"devMode":true}
+[2026-03-26 02:56:13] event=billing.paid | billingId=bill_RyMM2Y6pzsKjP4ms2tUrsHjY
+[2026-03-26 02:56:13] Venda encontrada: id=17 status_pagamento_id=1 status_pedido_id=1
+[2026-03-26 02:56:13] status_pagamento: id=2 desc=Confirmado
+[2026-03-26 02:56:13] status_pedido para pago: id=2 desc=Pagamento Confirmado
+[2026-03-26 02:56:13] UPDATE executado. Rows affected: 1
+[2026-03-26 02:56:13] Venda #17 → PAGA com sucesso.
+[2026-03-26 02:56:13] === FIM ===
