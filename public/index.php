@@ -388,12 +388,12 @@ $categorias = $db->query("
            CATEGORIAS
         ======================== */
         .section {
-            padding: 7rem 2rem;
+            padding: 3.5rem 2rem;
         }
 
         .section-header {
             text-align: center;
-            margin-bottom: 4rem;
+            margin-bottom: 2.2rem;
         }
 
         .section-eyebrow {
@@ -678,7 +678,7 @@ $categorias = $db->query("
 
         .ver-todos-wrap {
             text-align: center;
-            margin-top: 4rem;
+            margin-top: 2.5rem;
         }
 
         .btn-outline {
@@ -710,7 +710,7 @@ $categorias = $db->query("
         ======================== */
         .banner-section {
             background: linear-gradient(135deg, #0a0a0a 0%, #1a0810 40%, #2a0f1a 70%, #1a0a2a 100%);
-            padding: 6rem 2rem;
+            padding: 3.5rem 2rem;
             position: relative;
             overflow: hidden;
         }
@@ -738,11 +738,11 @@ $categorias = $db->query("
 
         .banner-title {
             font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-size: clamp(2.2rem, 4.5vw, 3.3rem);
             font-weight: 300;
             color: var(--white);
             line-height: 1.15;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         .banner-title em {
@@ -755,9 +755,9 @@ $categorias = $db->query("
 
         .banner-desc {
             color: rgba(255,255,255,0.55);
-            font-size: 0.9rem;
-            line-height: 1.8;
-            margin-bottom: 2.5rem;
+            font-size: 0.88rem;
+            line-height: 1.7;
+            margin-bottom: 1.6rem;
             font-weight: 300;
         }
 
@@ -773,7 +773,7 @@ $categorias = $db->query("
             margin: 0 auto;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 6rem;
+            gap: 3.5rem;
             align-items: center;
         }
 

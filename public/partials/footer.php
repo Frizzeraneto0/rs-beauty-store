@@ -2,9 +2,8 @@
     .rs-footer {
         background: linear-gradient(135deg, #0a0a0a 0%, #1a0810 100%);
         color: rgba(255,255,255,0.5);
-        padding: 4rem 2rem 2rem;
+        padding: 3rem 2rem 1.8rem;
         font-family: 'Montserrat', sans-serif;
-        margin-top: 5rem;
     }
 
     .rs-footer-inner {
@@ -15,10 +14,10 @@
     .rs-footer-top {
         display: grid;
         grid-template-columns: 2fr 1fr 1fr 1fr;
-        gap: 3rem;
-        padding-bottom: 3rem;
+        gap: 2.5rem;
+        padding-bottom: 2rem;
         border-bottom: 1px solid rgba(255,255,255,0.08);
-        margin-bottom: 2rem;
+        margin-bottom: 1.3rem;
     }
 
     .rs-footer-logo {
