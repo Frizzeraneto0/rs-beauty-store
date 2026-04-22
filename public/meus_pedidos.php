@@ -77,7 +77,7 @@ $stats = $stats->fetch(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meus Pedidos — RS BEAUTY STORE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <?php include __DIR__ . '/partials/navbar.php'; ?>
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -103,38 +103,10 @@ $stats = $stats->fetch(PDO::FETCH_ASSOC);
             min-height: 100vh;
         }
 
-        /* ── HEADER ── */
-        .header {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-            background: rgba(254,254,254,0.97);
-            backdrop-filter: blur(24px);
-            border-bottom: 1px solid var(--gray-mid);
-        }
-        .nav {
-            max-width: 1100px; margin: 0 auto;
-            padding: 1.2rem 2rem;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.8rem; font-weight: 600; letter-spacing: 3px;
-            background: linear-gradient(135deg, var(--black) 0%, var(--deep-rose) 50%, var(--luxury-purple) 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-clip: text; text-decoration: none;
-        }
-        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
-        .nav-link {
-            font-size: 0.82rem; font-weight: 600; text-transform: uppercase;
-            letter-spacing: 1px; color: var(--gray-dark);
-            text-decoration: none; transition: color 0.2s;
-        }
-        .nav-link:hover { color: var(--deep-rose); }
-        .nav-link.active { color: var(--deep-rose); }
-
         /* ── PAGE WRAPPER ── */
         .page {
             max-width: 1100px; margin: 0 auto;
-            padding: 110px 2rem 4rem;
+            padding: 2rem 2rem 4rem;
         }
 
         /* ── HERO HEADER ── */
@@ -462,17 +434,6 @@ $stats = $stats->fetch(PDO::FETCH_ASSOC);
 </head>
 <body>
 
-<header class="header">
-    <nav class="nav">
-        <a href="produtos.php" class="logo">RS BEAUTY STORE</a>
-        <div class="nav-links">
-            <a href="produtos.php" class="nav-link">Loja</a>
-            <a href="carrinho.php" class="nav-link">Carrinho</a>
-            <a href="meus_pedidos.php" class="nav-link active">Meus Pedidos</a>
-        </div>
-    </nav>
-</header>
-
 <div class="page">
 
     <!-- HERO -->
@@ -795,5 +756,6 @@ function atualizarChip(p) {
 setInterval(pollStatus, POLL_INTERVAL);
 </script>
 
+<?php include __DIR__ . '/partials/footer.php'; ?>
 </body>
 </html>

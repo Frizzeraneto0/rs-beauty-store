@@ -142,7 +142,7 @@ $totalProdutos = count($produtos);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Produtos - RS BEAUTY STORE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <?php include __DIR__ . '/partials/navbar.php'; ?>
     <style>
         * {
             margin: 0;
@@ -206,71 +206,6 @@ $totalProdutos = count($produtos);
             box-shadow: 0 0 10px rgba(232, 180, 184, 0.5);
         }
 
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 245, 247, 0.98) 100%);
-            backdrop-filter: blur(20px);
-            z-index: 1000;
-            border-bottom: 2px solid transparent;
-            border-image: linear-gradient(90deg, var(--rose-gold), var(--luxury-purple), var(--accent)) 1;
-            animation: slideDown 0.6s ease-out;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
-        }
-
-        @keyframes slideDown {
-            from { transform: translateY(-100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .nav {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2rem;
-            font-weight: 600;
-            letter-spacing: 2px;
-            background: linear-gradient(135deg, var(--black) 0%, var(--deep-rose) 50%, var(--luxury-purple) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-decoration: none;
-        }
-
-        .nav-icons {
-            display: flex;
-            gap: 1.5rem;
-            align-items: center;
-        }
-
-        .nav-icons a,
-        .nav-icons button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--black);
-            transition: transform 0.3s ease;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .nav-icons a:hover,
-        .nav-icons button:hover {
-            transform: scale(1.05);
-        }
-
         .icon {
             width: 20px;
             height: 20px;
@@ -279,31 +214,8 @@ $totalProdutos = count($produtos);
             stroke-width: 2;
         }
 
-        .cart-badge {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: linear-gradient(135deg, var(--deep-rose), var(--luxury-purple));
-            color: var(--white);
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            font-weight: 700;
-            box-shadow: 0 2px 10px rgba(198, 123, 136, 0.4);
-            animation: bounce 2s ease-in-out infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
         .page-header {
-            margin-top: 90px;
+            margin-top: 0;
             background: linear-gradient(135deg, #0a0a0a 0%, var(--deep-rose) 50%, var(--luxury-purple) 100%);
             padding: 5rem 2rem 4rem;
             text-align: center;
@@ -834,37 +746,6 @@ $totalProdutos = count($produtos);
     </style>
 </head>
 <body>
-    <header class="header">
-        <nav class="nav">
-            <a href="produtos.php" class="logo">RS BEAUTY STORE</a>
-            <div class="nav-icons">
-                <a href="produtos.php">
-                    <svg class="icon" viewBox="0 0 24 24">
-                        <path d="M3 3h18v18H3z"/>
-                        <path d="M9 9h6v6H9z"/>
-                    </svg>
-                    Produtos
-                </a>
-                <a href="carrinho.php" style="position: relative;">
-                    <svg class="icon" viewBox="0 0 24 24">
-                        <circle cx="9" cy="21" r="1"/>
-                        <circle cx="20" cy="21" r="1"/>
-                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-                    </svg>
-                    <span class="cart-badge">0</span>
-                </a>
-                <?php if (isset($_SESSION['access_token'])): ?>
-                    <a href="/admin/dashboard.php">
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                            <circle cx="12" cy="7" r="4"/>
-                        </svg>
-                    </a>
-                <?php endif; ?>
-            </div>
-        </nav>
-    </header>
-
     <div class="page-header">
         <h1>Nossa Coleção</h1>
         <p>Descubra produtos premium de beleza</p>
@@ -1085,11 +966,7 @@ $totalProdutos = count($produtos);
         }
 
         function atualizarCarrinho() {
-            const carrinho = JSON.parse(localStorage.getItem('carrinho') || '[]');
-            const badge = document.querySelector('.cart-badge');
-            if (badge) {
-                badge.textContent = carrinho.length;
-            }
+            if (typeof rsUpdateCartBadge === 'function') rsUpdateCartBadge();
         }
 
         window.addEventListener('scroll', () => {
@@ -1097,11 +974,6 @@ $totalProdutos = count($produtos);
             const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
             const progress = (scrollTop / scrollHeight) * 100;
             document.documentElement.style.setProperty('--scroll-progress', `${progress}%`);
-
-            const header = document.querySelector('.page-header');
-            if (header) {
-                header.style.transform = `translateY(${scrollTop * 0.5}px)`;
-            }
         });
 
         const style = document.createElement('style');
@@ -1110,5 +982,6 @@ $totalProdutos = count($produtos);
 
         atualizarCarrinho();
     </script>
+    <?php include __DIR__ . '/partials/footer.php'; ?>
 </body>
 </html>

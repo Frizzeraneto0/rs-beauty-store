@@ -47,7 +47,7 @@ $categorias = $db->query("
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RS Beauty Store — Beleza Premium</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <?php include __DIR__ . '/partials/navbar.php'; ?>
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -74,6 +74,9 @@ $categorias = $db->query("
             overflow-x: hidden;
         }
 
+        /* page-specific spacer reset so hero sits immediately below navbar */
+        .rs-nav-spacer { display: none; }
+
         /* ========================
            SCROLL PROGRESS
         ======================== */
@@ -88,112 +91,9 @@ $categorias = $db->query("
             box-shadow: 0 0 10px rgba(232, 180, 184, 0.6);
         }
 
-        /* ========================
-           HEADER / NAV
-        ======================== */
-        .header {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            background: rgba(254, 254, 254, 0.97);
-            backdrop-filter: blur(20px);
-            z-index: 1000;
-            border-bottom: 1px solid rgba(232, 180, 184, 0.25);
-            transition: box-shadow 0.3s ease;
-        }
-
-        .header.scrolled {
-            box-shadow: 0 4px 30px rgba(198, 123, 136, 0.12);
-        }
-
-        .nav {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1.4rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.9rem;
-            font-weight: 600;
-            letter-spacing: 3px;
-            text-decoration: none;
-            background: linear-gradient(135deg, var(--black) 0%, var(--deep-rose) 55%, var(--luxury-purple) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2.5rem;
-            list-style: none;
-            align-items: center;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--black);
-            font-size: 0.8rem;
-            font-weight: 500;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            position: relative;
-            padding-bottom: 4px;
-            transition: color 0.3s;
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0;
-            width: 0; height: 1px;
-            background: linear-gradient(90deg, var(--deep-rose), var(--luxury-purple));
-            transition: width 0.3s ease;
-        }
-
-        .nav-links a:hover { color: var(--deep-rose); }
-        .nav-links a:hover::after { width: 100%; }
-
-        .nav-icons {
-            display: flex;
-            gap: 1.2rem;
-            align-items: center;
-        }
-
-        .nav-icon-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--black);
-            position: relative;
-            padding: 0.3rem;
-            transition: transform 0.3s, color 0.3s;
-            text-decoration: none;
-            display: flex;
-        }
-
-        .nav-icon-btn:hover { transform: scale(1.1); color: var(--deep-rose); }
-
         .icon {
             width: 20px; height: 20px;
             stroke: currentColor; fill: none; stroke-width: 2;
-        }
-
-        .cart-badge {
-            position: absolute;
-            top: -6px; right: -6px;
-            background: linear-gradient(135deg, var(--deep-rose), var(--luxury-purple));
-            color: var(--white);
-            border-radius: 50%;
-            width: 18px; height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.65rem;
-            font-weight: 700;
         }
 
         /* ========================
@@ -1023,79 +923,6 @@ $categorias = $db->query("
         }
 
         /* ========================
-           FOOTER
-        ======================== */
-        footer {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a0810 100%);
-            color: rgba(255,255,255,0.5);
-            padding: 4rem 2rem 2rem;
-        }
-
-        .footer-inner {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .footer-top {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 4rem;
-            padding-bottom: 3rem;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            margin-bottom: 2rem;
-        }
-
-        .footer-logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.8rem;
-            font-weight: 600;
-            letter-spacing: 3px;
-            text-decoration: none;
-            background: linear-gradient(135deg, var(--white), var(--rose-gold));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            display: block;
-            margin-bottom: 1rem;
-        }
-
-        .footer-desc {
-            font-size: 0.82rem;
-            line-height: 1.8;
-            color: rgba(255,255,255,0.35);
-        }
-
-        .footer-col h4 {
-            color: var(--white);
-            font-size: 0.72rem;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 1.5rem;
-        }
-
-        .footer-col ul { list-style: none; }
-
-        .footer-col ul li { margin-bottom: 0.8rem; }
-
-        .footer-col ul li a {
-            color: rgba(255,255,255,0.4);
-            text-decoration: none;
-            font-size: 0.82rem;
-            transition: color 0.3s;
-        }
-
-        .footer-col ul li a:hover { color: var(--rose-gold); }
-
-        .footer-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.75rem;
-            color: rgba(255,255,255,0.25);
-        }
-
-        /* ========================
            RESPONSIVO
         ======================== */
         @media (max-width: 1100px) {
@@ -1109,12 +936,9 @@ $categorias = $db->query("
             .hero-stats { left: 2.5rem; }
             .categories-grid { grid-template-columns: repeat(2, 1fr); }
             .about-grid { grid-template-columns: 1fr; gap: 3rem; }
-            .footer-top { grid-template-columns: 1fr; gap: 2rem; }
-            .footer-bottom { flex-direction: column; gap: 0.5rem; text-align: center; }
         }
 
         @media (max-width: 600px) {
-            .nav-links { display: none; }
             .categories-grid { grid-template-columns: 1fr; }
             .featured-grid { grid-template-columns: 1fr; }
             .about-values { grid-template-columns: 1fr; }
@@ -1124,46 +948,6 @@ $categorias = $db->query("
 <body>
 
     <div id="scroll-bar"></div>
-
-    <!-- ========================
-         HEADER
-    ======================== -->
-    <header class="header" id="header">
-        <nav class="nav">
-            <a href="index.php" class="logo">RS BEAUTY STORE</a>
-
-            <ul class="nav-links">
-                <li><a href="index.php">Início</a></li>
-                <li><a href="produtos.php">Produtos</a></li>
-                <li><a href="#categorias">Categorias</a></li>
-                <li><a href="#sobre">Sobre</a></li>
-            </ul>
-
-            <div class="nav-icons">
-                <a href="produtos.php" class="nav-icon-btn" title="Produtos">
-                    <svg class="icon" viewBox="0 0 24 24">
-                        <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-                    </svg>
-                </a>
-                <a href="carrinho.php" class="nav-icon-btn" title="Carrinho">
-                    <svg class="icon" viewBox="0 0 24 24">
-                        <circle cx="9" cy="21" r="1"/>
-                        <circle cx="20" cy="21" r="1"/>
-                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-                    </svg>
-                    <span class="cart-badge" id="cart-count">0</span>
-                </a>
-                <?php if (isset($_SESSION['access_token'])): ?>
-                    <a href="/admin/dashboard.php" class="nav-icon-btn" title="Admin">
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                            <circle cx="12" cy="7" r="4"/>
-                        </svg>
-                    </a>
-                <?php endif; ?>
-            </div>
-        </nav>
-    </header>
 
     <!-- ========================
          HERO
@@ -1424,44 +1208,7 @@ $categorias = $db->query("
         </div>
     </section>
 
-    <!-- ========================
-         FOOTER
-    ======================== -->
-    <footer>
-        <div class="footer-inner">
-            <div class="footer-top">
-                <div>
-                    <a href="index.php" class="footer-logo">RS BEAUTY STORE</a>
-                    <p class="footer-desc">
-                        Beleza premium para quem merece o melhor. 
-                        Curadoria exclusiva de produtos selecionados com carinho.
-                    </p>
-                </div>
-                <div class="footer-col">
-                    <h4>Navegação</h4>
-                    <ul>
-                        <li><a href="index.php">Início</a></li>
-                        <li><a href="produtos.php">Produtos</a></li>
-                        <li><a href="#categorias">Categorias</a></li>
-                        <li><a href="carrinho.php">Carrinho</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Informações</h4>
-                    <ul>
-                        <li><a href="#sobre">Sobre nós</a></li>
-                        <li><a href="#">Política de trocas</a></li>
-                        <li><a href="#">Privacidade</a></li>
-                        <li><a href="#">Contato</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <span>© <?= date('Y') ?> RS Beauty Store. Todos os direitos reservados.</span>
-                <span>Feito com ♥ para você</span>
-            </div>
-        </div>
-    </footer>
+    <?php include __DIR__ . '/partials/footer.php'; ?>
 
     <script>
         // Scroll progress bar
@@ -1469,9 +1216,6 @@ $categorias = $db->query("
             const scrollTop = window.pageYOffset;
             const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
             document.getElementById('scroll-bar').style.width = (scrollTop / docHeight * 100) + '%';
-
-            // Header shadow on scroll
-            document.getElementById('header').classList.toggle('scrolled', scrollTop > 50);
         });
 
         // Animate product cards on scroll
@@ -1489,12 +1233,6 @@ $categorias = $db->query("
 
         document.querySelectorAll('.product-card').forEach(card => observer.observe(card));
 
-        // Carrinho
-        function atualizarCarrinho() {
-            const carrinho = JSON.parse(localStorage.getItem('carrinho') || '[]');
-            document.getElementById('cart-count').textContent = carrinho.length;
-        }
-
         function adicionarAoCarrinho(produtoId, btn) {
             const original = btn.textContent;
             btn.textContent = 'Adicionando...';
@@ -1504,7 +1242,7 @@ $categorias = $db->query("
                 const carrinho = JSON.parse(localStorage.getItem('carrinho') || '[]');
                 carrinho.push({ id: produtoId });
                 localStorage.setItem('carrinho', JSON.stringify(carrinho));
-                atualizarCarrinho();
+                if (typeof rsUpdateCartBadge === 'function') rsUpdateCartBadge();
 
                 btn.textContent = '✓ Adicionado!';
                 btn.style.background = 'linear-gradient(135deg, #4CAF50, #45a049)';
@@ -1516,8 +1254,6 @@ $categorias = $db->query("
                 }, 1800);
             }, 600);
         }
-
-        atualizarCarrinho();
     </script>
 </body>
 </html>

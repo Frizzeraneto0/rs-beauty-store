@@ -2,6 +2,7 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
+session_start();
 require_once __DIR__ . '/../config/database.php';
 $db = getPDO();
 
@@ -224,7 +225,7 @@ $isKit = ($tipoItem === 'kit');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($produto['nome']) ?> - RS BEAUTY STORE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <?php include __DIR__ . '/partials/navbar.php'; ?>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -249,66 +250,11 @@ $isKit = ($tipoItem === 'kit');
             line-height: 1.6;
         }
 
-        /* ===== HEADER ===== */
-        .header {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(255,245,247,0.98));
-            backdrop-filter: blur(20px);
-            z-index: 1000;
-            border-bottom: 2px solid transparent;
-            border-image: linear-gradient(90deg, var(--rose-gold), var(--luxury-purple), var(--accent)) 1;
-            box-shadow: 0 4px 30px rgba(0,0,0,0.05);
-        }
-
-        .nav {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2rem;
-            font-weight: 600;
-            letter-spacing: 2px;
-            background: linear-gradient(135deg, var(--black) 0%, var(--deep-rose) 50%, var(--luxury-purple) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-decoration: none;
-        }
-
-        .nav-icons { display: flex; gap: 1.5rem; align-items: center; }
-
-        .nav-icons a {
-            color: var(--black);
-            text-decoration: none;
-            transition: transform 0.3s;
-            position: relative;
-        }
-
-        .nav-icons a:hover { transform: translateY(-3px); }
-
         .icon { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; }
-
-        .cart-badge {
-            position: absolute;
-            top: -8px; right: -8px;
-            background: linear-gradient(135deg, var(--deep-rose), var(--luxury-purple));
-            color: var(--white);
-            border-radius: 50%;
-            width: 20px; height: 20px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.7rem; font-weight: 700;
-        }
 
         /* ===== BREADCRUMB ===== */
         .breadcrumb {
-            margin-top: 120px;
+            margin-top: 1.5rem;
             padding: 1rem 2rem;
             max-width: 1400px;
             margin-left: auto;
@@ -573,29 +519,7 @@ $isKit = ($tipoItem === 'kit');
 </head>
 <body>
 
-    <header class="header">
-        <nav class="nav">
-            <a href="produtos.php" class="logo">RS BEAUTY STORE</a>
-            <div class="nav-icons">
-                <a href="produtos.php">
-                    <svg class="icon" viewBox="0 0 24 24">
-                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                        <polyline points="9,22 9,12 15,12 15,22"/>
-                    </svg>
-                </a>
-                <a href="carrinho.php" style="position: relative;">
-                    <svg class="icon" viewBox="0 0 24 24">
-                        <circle cx="9" cy="21" r="1"/>
-                        <circle cx="20" cy="21" r="1"/>
-                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-                    </svg>
-                    <span class="cart-badge" id="cartBadge">0</span>
-                </a>
-            </div>
-        </nav>
-    </header>
-
-    <div class="breadcrumb" style="margin-top: 100px;">
+    <div class="breadcrumb">
         <a href="index.php">Início</a>
         <span>›</span>
         <a href="produtos.php">Produtos</a>
@@ -901,14 +825,13 @@ $isKit = ($tipoItem === 'kit');
     }
 
     function atualizarBadge() {
-        const carrinho = JSON.parse(localStorage.getItem('carrinho') || '[]');
-        const badge = document.getElementById('cartBadge');
-        if (badge) badge.textContent = carrinho.length;
+        if (typeof rsUpdateCartBadge === 'function') rsUpdateCartBadge();
     }
 
     // Init
     atualizarBadge();
     </script>
 
+    <?php include __DIR__ . '/partials/footer.php'; ?>
 </body>
 </html>

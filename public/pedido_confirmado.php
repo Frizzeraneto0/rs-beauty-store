@@ -77,7 +77,7 @@ $isPago = str_contains(strtolower($venda['status_pagamento'] ?? ''), 'pago')
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pedido Confirmado — RS BEAUTY STORE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <?php include __DIR__ . '/partials/navbar.php'; ?>
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -104,32 +104,10 @@ $isPago = str_contains(strtolower($venda['status_pagamento'] ?? ''), 'pago')
             color: var(--black);
         }
 
-        /* ── HEADER ── */
-        .header {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-            background: rgba(255,255,255,0.97);
-            backdrop-filter: blur(20px);
-            border-bottom: 2px solid transparent;
-            border-image: linear-gradient(90deg, var(--rose-gold), var(--luxury-purple), var(--accent)) 1;
-            box-shadow: 0 4px 30px rgba(0,0,0,0.05);
-        }
-        .nav {
-            max-width: 1200px; margin: 0 auto;
-            padding: 1.4rem 2rem;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.9rem; font-weight: 600; letter-spacing: 2px;
-            background: linear-gradient(135deg, var(--black), var(--deep-rose), var(--luxury-purple));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-clip: text; text-decoration: none;
-        }
-
         /* ── HERO CONFIRMAÇÃO ── */
         .hero {
-            margin-top: 90px;
-            padding: 4rem 2rem 2rem;
+            margin-top: 0;
+            padding: 3rem 2rem 2rem;
             text-align: center;
         }
 
@@ -390,12 +368,6 @@ $isPago = str_contains(strtolower($venda['status_pagamento'] ?? ''), 'pago')
     </style>
 </head>
 <body>
-
-<header class="header">
-    <nav class="nav">
-        <a href="produtos.php" class="logo">RS BEAUTY STORE</a>
-    </nav>
-</header>
 
 <!-- HERO -->
 <div class="hero">
@@ -667,5 +639,6 @@ if (!jaPago) {
 }
 </script>
 
+<?php include __DIR__ . '/partials/footer.php'; ?>
 </body>
 </html>

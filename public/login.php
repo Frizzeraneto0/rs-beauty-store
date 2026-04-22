@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Entrar — RS BEAUTY STORE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <?php include __DIR__ . '/partials/navbar.php'; ?>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -84,8 +84,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 2rem;
+            padding: 3rem 2rem;
+            position: relative;
         }
+
 
         /* ===== LOGO ===== */
         .logo-wrap {
@@ -326,7 +328,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 
     <div class="logo-wrap">
-        <a href="produtos.php" class="logo">RS BEAUTY STORE</a>
+        <a href="index.php" class="logo">RS BEAUTY STORE</a>
         <div class="logo-tagline">Beleza & Elegância</div>
     </div>
 
@@ -401,7 +403,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </a>
     </div>
 
-    <a href="produtos.php" class="link-voltar">
+    <a href="index.php" class="link-voltar">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M19 12H5M12 19l-7-7 7-7"/>
         </svg>

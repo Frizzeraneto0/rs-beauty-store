@@ -33,7 +33,7 @@ define('STORE_URL', 'https://rs-beauty-store.com');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finalizar Compra - RS BEAUTY STORE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <?php include __DIR__ . '/partials/navbar.php'; ?>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -59,32 +59,9 @@ define('STORE_URL', 'https://rs-beauty-store.com');
             min-height: 100vh;
         }
 
-        .header {
-            position: fixed; top: 0; left: 0; right: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(255,245,247,0.98));
-            backdrop-filter: blur(20px); z-index: 1000;
-            border-bottom: 2px solid transparent;
-            border-image: linear-gradient(90deg, var(--rose-gold), var(--luxury-purple), var(--accent)) 1;
-            box-shadow: 0 4px 30px rgba(0,0,0,0.05);
-        }
-
-        .nav {
-            max-width: 1400px; margin: 0 auto;
-            padding: 1.5rem 2rem;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-
-        .logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2rem; font-weight: 600; letter-spacing: 2px;
-            background: linear-gradient(135deg, var(--black) 0%, var(--deep-rose) 50%, var(--luxury-purple) 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-clip: text; text-decoration: none;
-        }
-
         .checkout-container {
             max-width: 1400px;
-            margin: 120px auto 3rem;
+            margin: 2rem auto 3rem;
             padding: 0 2rem;
             display: grid;
             grid-template-columns: 1fr 400px;
@@ -286,12 +263,6 @@ define('STORE_URL', 'https://rs-beauty-store.com');
     </style>
 </head>
 <body>
-
-<header class="header">
-    <nav class="nav">
-        <a href="produtos.php" class="logo">RS BEAUTY STORE</a>
-    </nav>
-</header>
 
 <div class="checkout-container">
     <div class="checkout-main">
@@ -673,5 +644,6 @@ async function finalizarCompra() {
 
 carregarCarrinho();
 </script>
+<?php include __DIR__ . '/partials/footer.php'; ?>
 </body>
 </html>
