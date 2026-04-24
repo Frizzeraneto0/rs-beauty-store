@@ -64,10 +64,16 @@ if ($action === 'finalizar_compra') {
     $abacateMethods  = $input['abacate_methods']  ?? ['PIX', 'CARD']; // ex: ["PIX"]
     $valorTotal      = (float)($input['valor_total'] ?? 0);
     $taxId           = preg_replace('/\D/', '', $input['taxId'] ?? '');
-    $end             = $input['endereco'] ?? [];
+    $enderecoId      = (int)($input['endereco_id'] ?? 0);
+    $cliente         = $input['cliente'] ?? [];
 
     if (empty($carrinho) || !$metodoPagamento || $valorTotal <= 0) {
         echo json_encode(['success' => false, 'message' => 'Carrinho, método ou valor inválido']);
+        exit;
+    }
+
+    if ($enderecoId <= 0) {
+        echo json_encode(['success' => false, 'message' => 'Selecione um endereço de entrega.']);
         exit;
     }
 
@@ -85,35 +91,20 @@ if ($action === 'finalizar_compra') {
     try {
         $db->beginTransaction();
 
-        // ── 1. Separar rua e número ──────────────────────────
-        $enderecoCompleto = $end['endereco'] ?? '';
-        $partes  = explode(',', $enderecoCompleto, 2);
-        $rua     = trim($partes[0] ?? $enderecoCompleto);
-        $numero  = trim($partes[1] ?? 'S/N');
+        // ── 1. Validar endereço do usuário ───────────────────
+        $stmtEnd = $db->prepare("
+            SELECT * FROM enderecos
+            WHERE id = :id AND usuario_id = :uid
+            LIMIT 1
+        ");
+        $stmtEnd->execute([':id' => $enderecoId, ':uid' => $_SESSION['user_id']]);
+        $enderecoRow = $stmtEnd->fetch(PDO::FETCH_ASSOC);
 
-        // ── 2. Inserir endereço ──────────────────────────────
-        $db->prepare("
-            INSERT INTO enderecos
-                (cep, rua, numero, complemento, bairro, cidade, estado,
-                 tipo_endereco_id, usuario_id)
-            VALUES
-                (:cep, :rua, :numero, :complemento, :bairro, :cidade, :estado,
-                 :tipo_endereco_id, :usuario_id)
-        ")->execute([
-            ':cep'             => $end['cep']              ?? '',
-            ':rua'             => $rua,
-            ':numero'          => $numero,
-            ':complemento'     => $end['complemento']      ?? null,
-            ':bairro'          => $end['bairro']           ?? '',
-            ':cidade'          => $end['cidade']           ?? '',
-            ':estado'          => $end['estado']           ?? 'ES',
-            ':tipo_endereco_id'=> $end['tipo_endereco_id'] ?? 1,
-            ':usuario_id'      => $_SESSION['user_id'],
-        ]);
+        if (!$enderecoRow) {
+            throw new RuntimeException('Endereço não encontrado ou não pertence ao usuário.');
+        }
 
-        $enderecoId = $db->lastInsertId();
-
-        // ── 3. Status inicial do pedido ──────────────────────
+        // ── 2. Status inicial do pedido ──────────────────────
         $statusPedidoInicial = $db->query(
             "SELECT id FROM status_pedido ORDER BY ordem LIMIT 1"
         )->fetchColumn();
@@ -177,9 +168,9 @@ if ($action === 'finalizar_compra') {
             'returnUrl'     => STORE_URL . '/carrinho.php',
             'completionUrl' => STORE_URL . '/pedido_confirmado.php?id=' . $vendaId,
             'customer'      => [
-                'name'      => $end['nome']     ?? '',
-                'cellphone' => $end['telefone'] ?? '',
-                'email'     => $end['email']    ?? '',
+                'name'      => $cliente['nome']     ?? '',
+                'cellphone' => $cliente['telefone'] ?? '',
+                'email'     => $cliente['email']    ?? '',
                 'taxId'     => $taxId,
             ],
             'externalId'    => 'venda_' . $vendaId,

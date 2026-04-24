@@ -23,7 +23,22 @@ if (!$usuario) {
     exit;
 }
 
-$tiposEndereco = $db->query("SELECT * FROM tipo_endereco ORDER BY id")->fetchAll(PDO::FETCH_ASSOC);
+// Endereços salvos do cliente (um por tipo — o mais recente)
+$stmtEnd = $db->prepare("
+    SELECT e.*, te.descricao AS tipo_desc
+    FROM enderecos e
+    INNER JOIN (
+        SELECT tipo_endereco_id, MAX(id) AS id
+        FROM enderecos
+        WHERE usuario_id = :uid
+        GROUP BY tipo_endereco_id
+    ) ult ON ult.id = e.id
+    INNER JOIN tipo_endereco te ON te.id = e.tipo_endereco_id
+    WHERE e.usuario_id = :uid
+    ORDER BY e.tipo_endereco_id
+");
+$stmtEnd->execute([':uid' => $_SESSION['user_id']]);
+$enderecosSalvos = $stmtEnd->fetchAll(PDO::FETCH_ASSOC);
 
 define('STORE_URL', 'https://rs-beauty-store.com');
 ?>
@@ -94,19 +109,60 @@ define('STORE_URL', 'https://rs-beauty-store.com');
         .form-input:focus { outline: none; border-color: var(--rose-gold); box-shadow: 0 4px 15px rgba(232,180,184,0.2); }
         .form-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
 
-        /* TIPO ENDEREÇO */
-        .tipo-endereco-options { display: flex; gap: 1rem; flex-wrap: wrap; }
-        .tipo-option {
-            display: flex; align-items: center; gap: 0.6rem;
-            padding: 0.8rem 1.4rem; border: 2px solid var(--gray-mid);
-            border-radius: 10px; cursor: pointer; transition: all 0.3s;
-            font-size: 0.9rem; font-weight: 500;
+        /* ===== ENDEREÇO (saved cards) ===== */
+        .enderecos-lista { display: flex; flex-direction: column; gap: 0.8rem; }
+        .endereco-opt {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.1rem 1.2rem;
+            border: 2px solid var(--gray-mid);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.25s;
+            background: var(--white);
+            position: relative;
         }
-        .tipo-option:hover { border-color: var(--rose-gold); background: var(--soft-pink); }
-        .tipo-option.active {
+        .endereco-opt input[type="radio"] {
+            position: absolute; opacity: 0; pointer-events: none;
+        }
+        .endereco-opt:hover {
+            border-color: var(--rose-gold);
+            background: linear-gradient(135deg, var(--soft-pink), rgba(255,255,255,0.8));
+        }
+        .endereco-opt.active {
             border-color: var(--deep-rose);
-            background: linear-gradient(135deg, var(--soft-pink), rgba(232,180,184,0.3));
-            font-weight: 700;
+            background: linear-gradient(135deg, var(--soft-pink), rgba(232,180,184,0.15));
+            box-shadow: 0 6px 20px rgba(198, 123, 136, 0.12);
+        }
+        .end-icon {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 42px; height: 42px; border-radius: 10px;
+            background: linear-gradient(135deg, var(--deep-rose), var(--luxury-purple));
+            font-size: 1.15rem;
+        }
+        .end-body { min-width: 0; }
+        .end-tipo {
+            font-size: 0.68rem; letter-spacing: 2px; text-transform: uppercase;
+            color: var(--deep-rose); font-weight: 700; margin-bottom: 0.2rem;
+        }
+        .end-rua {
+            font-size: 0.93rem; font-weight: 600; color: var(--black);
+            margin-bottom: 0.15rem;
+        }
+        .end-meta {
+            font-size: 0.78rem; color: var(--gray-dark);
+        }
+        .end-check {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: var(--gray-mid); color: transparent;
+            display: inline-flex; align-items: center; justify-content: center;
+            transition: all 0.25s;
+        }
+        .endereco-opt.active .end-check {
+            background: linear-gradient(135deg, var(--deep-rose), var(--luxury-purple));
+            color: var(--white);
         }
 
         /* ===== PAYMENT ===== */
@@ -295,7 +351,7 @@ define('STORE_URL', 'https://rs-beauty-store.com');
                 <div class="form-group">
                     <label class="form-label">CPF / CNPJ <span style="color:var(--deep-rose)">*</span></label>
                     <input type="text" class="form-input" id="taxId"
-                           value="<?= htmlspecialchars($usuario['cpf'] ?? '') ?>"
+                           value=""
                            placeholder="000.000.000-00"
                            oninput="mascaraCpfCnpj(this)" required>
                     <small style="color:var(--gray-dark);font-size:0.78rem;margin-top:0.3rem;display:block;">
@@ -303,55 +359,57 @@ define('STORE_URL', 'https://rs-beauty-store.com');
                     </small>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">CEP</label>
-                        <input type="text" class="form-input" id="cep"
-                               placeholder="00000-000" maxlength="9"
-                               oninput="mascaraCEP(this)" required>
+                <!-- ======= ENDEREÇO DE ENTREGA ======= -->
+                <div class="form-group" style="margin-top:1.5rem">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem;flex-wrap:wrap;gap:0.5rem">
+                        <label class="form-label" style="margin:0">Endereço de Entrega</label>
+                        <a href="configuracoes.php" style="font-size:0.78rem;color:var(--deep-rose);text-decoration:none;font-weight:600">
+                            <?= empty($enderecosSalvos) ? '+ Cadastrar endereço' : 'Editar endereços' ?>
+                        </a>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Cidade</label>
-                        <input type="text" class="form-input" id="cidade" required>
-                    </div>
-                </div>
 
-                <div class="form-group">
-                    <label class="form-label">Endereço</label>
-                    <input type="text" class="form-input" id="endereco"
-                           placeholder="Rua, número" required>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Bairro</label>
-                        <input type="text" class="form-input" id="bairro" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Complemento</label>
-                        <input type="text" class="form-input" id="complemento">
-                    </div>
-                </div>
-
-                <input type="hidden" id="estado" value="">
-
-                <div class="form-group">
-                    <label class="form-label">Tipo de Endereço</label>
-                    <div class="tipo-endereco-options">
-                        <?php foreach ($tiposEndereco as $tipo): ?>
-                            <div class="tipo-option <?= $tipo === reset($tiposEndereco) ? 'active' : '' ?>"
-                                 data-id="<?= $tipo['id'] ?>"
-                                 onclick="selecionarTipoEndereco(<?= $tipo['id'] ?>, this)">
-                                <?php
-                                $icones = ['Residencial' => '🏠', 'Comercial' => '🏢'];
-                                echo $icones[$tipo['descricao']] ?? '📍';
-                                ?>
-                                <?= htmlspecialchars($tipo['descricao']) ?>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                    <input type="hidden" id="tipo_endereco_id"
-                           value="<?= htmlspecialchars($tiposEndereco[0]['id'] ?? 1) ?>">
+                    <?php if (empty($enderecosSalvos)): ?>
+                        <div style="padding:1.8rem 1.2rem;border:1px dashed rgba(198,123,136,0.4);border-radius:12px;text-align:center;background:var(--soft-pink)">
+                            <div style="font-size:2rem;margin-bottom:0.5rem">📍</div>
+                            <p style="color:var(--gray-dark);margin-bottom:1rem;font-size:0.9rem">
+                                Você ainda não tem endereços cadastrados.
+                            </p>
+                            <a href="configuracoes.php" style="display:inline-block;padding:0.8rem 1.6rem;background:linear-gradient(135deg,var(--deep-rose),var(--luxury-purple));color:white;text-decoration:none;border-radius:50px;font-size:0.78rem;font-weight:600;letter-spacing:1.3px;text-transform:uppercase">
+                                Cadastrar endereço agora
+                            </a>
+                        </div>
+                    <?php else: ?>
+                        <div class="enderecos-lista">
+                            <?php foreach ($enderecosSalvos as $i => $end):
+                                $icone = ['Residencial' => '🏠', 'Comercial' => '🏢'][$end['tipo_desc']] ?? '📍';
+                            ?>
+                                <label class="endereco-opt <?= $i === 0 ? 'active' : '' ?>" data-id="<?= $end['id'] ?>">
+                                    <input type="radio" name="endereco_id_radio" value="<?= $end['id'] ?>"
+                                           <?= $i === 0 ? 'checked' : '' ?>
+                                           onchange="selecionarEndereco(this)">
+                                    <div class="end-left">
+                                        <span class="end-icon"><?= $icone ?></span>
+                                    </div>
+                                    <div class="end-body">
+                                        <div class="end-tipo"><?= htmlspecialchars($end['tipo_desc']) ?></div>
+                                        <div class="end-rua">
+                                            <?= htmlspecialchars($end['rua']) ?><?= $end['numero'] ? ', ' . htmlspecialchars($end['numero']) : '' ?>
+                                            <?= $end['complemento'] ? ' — ' . htmlspecialchars($end['complemento']) : '' ?>
+                                        </div>
+                                        <div class="end-meta">
+                                            <?= htmlspecialchars($end['bairro']) ?> · <?= htmlspecialchars($end['cidade']) ?>/<?= htmlspecialchars($end['estado']) ?> · <?= htmlspecialchars($end['cep']) ?>
+                                        </div>
+                                    </div>
+                                    <div class="end-check">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                            <polyline points="20 6 9 17 4 12"/>
+                                        </svg>
+                                    </div>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                        <input type="hidden" id="endereco_id" value="<?= htmlspecialchars($enderecosSalvos[0]['id']) ?>">
+                    <?php endif; ?>
                 </div>
             </form>
         </div>
@@ -506,22 +564,17 @@ function selecionarPagamento(metodo, el) {
     document.getElementById('cardInfo').classList.toggle('visible', metodo === 'cartao_credito' || metodo === 'cartao_debito');
 }
 
-function selecionarTipoEndereco(id, el) {
-    document.querySelectorAll('.tipo-option').forEach(e => e.classList.remove('active'));
-    el.classList.add('active');
-    document.getElementById('tipo_endereco_id').value = id;
+function selecionarEndereco(radio) {
+    document.querySelectorAll('.endereco-opt').forEach(e => e.classList.remove('active'));
+    const card = radio.closest('.endereco-opt');
+    if (card) card.classList.add('active');
+    const hidden = document.getElementById('endereco_id');
+    if (hidden) hidden.value = radio.value;
 }
 
 // ============================================================
 // MÁSCARAS
 // ============================================================
-function mascaraCEP(input) {
-    let v = input.value.replace(/\D/g,'');
-    if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5,8);
-    input.value = v;
-    if (v.replace('-','').length === 8) buscarCEP(v.replace('-',''));
-}
-
 function mascaraTelefone(input) {
     let v = input.value.replace(/\D/g,'').slice(0,11);
     if (v.length > 6)      v = `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
@@ -543,18 +596,6 @@ function mascaraCpfCnpj(input) {
              .replace(/(\d{4})(\d)/,'$1-$2');
     }
     input.value = v;
-}
-
-async function buscarCEP(cep) {
-    try {
-        const data = await fetch(`https://viacep.com.br/ws/${cep}/json/`).then(r => r.json());
-        if (!data.erro) {
-            document.getElementById('endereco').value = data.logradouro || '';
-            document.getElementById('bairro').value   = data.bairro     || '';
-            document.getElementById('cidade').value   = data.localidade || '';
-            document.getElementById('estado').value   = data.uf         || '';
-        }
-    } catch(e) {}
 }
 
 // ============================================================
@@ -581,6 +622,13 @@ async function finalizarCompra() {
         return;
     }
 
+    const enderecoIdEl = document.getElementById('endereco_id');
+    const enderecoId = enderecoIdEl ? parseInt(enderecoIdEl.value, 10) : 0;
+    if (!enderecoId) {
+        mostrarErro('Cadastre um endereço em "Configurações" antes de continuar.');
+        return;
+    }
+
     if (!pagamentoSelecionado) {
         mostrarErro('Por favor, selecione uma forma de pagamento.');
         return;
@@ -596,21 +644,15 @@ async function finalizarCompra() {
 
     const dados = {
         carrinho,
-        metodo_pagamento:    pagamentoSelecionado.metodo,   // ex: "pix"
-        abacate_methods:     pagamentoSelecionado.methods,  // ex: ["PIX"]
+        metodo_pagamento:    pagamentoSelecionado.metodo,
+        abacate_methods:     pagamentoSelecionado.methods,
         valor_total:         subtotal,
         taxId,
-        endereco: {
-            tipo_endereco_id: document.getElementById('tipo_endereco_id').value,
-            nome:             document.getElementById('nome').value,
-            email:            document.getElementById('email').value,
-            telefone:         document.getElementById('telefone').value.replace(/\D/g,''),
-            cep:              document.getElementById('cep').value,
-            cidade:           document.getElementById('cidade').value,
-            estado:           document.getElementById('estado').value || 'ES',
-            endereco:         document.getElementById('endereco').value,
-            bairro:           document.getElementById('bairro').value,
-            complemento:      document.getElementById('complemento').value,
+        endereco_id:         enderecoId,
+        cliente: {
+            nome:     document.getElementById('nome').value,
+            email:    document.getElementById('email').value,
+            telefone: document.getElementById('telefone').value.replace(/\D/g,''),
         }
     };
 
