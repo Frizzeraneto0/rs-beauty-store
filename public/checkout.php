@@ -30,14 +30,17 @@ $stmtEnd = $db->prepare("
     INNER JOIN (
         SELECT tipo_endereco_id, MAX(id) AS id
         FROM enderecos
-        WHERE usuario_id = :uid
+        WHERE usuario_id = :uid_sub
         GROUP BY tipo_endereco_id
     ) ult ON ult.id = e.id
     INNER JOIN tipo_endereco te ON te.id = e.tipo_endereco_id
-    WHERE e.usuario_id = :uid
+    WHERE e.usuario_id = :uid_out
     ORDER BY e.tipo_endereco_id
 ");
-$stmtEnd->execute([':uid' => $_SESSION['user_id']]);
+$stmtEnd->execute([
+    ':uid_sub' => $_SESSION['user_id'],
+    ':uid_out' => $_SESSION['user_id'],
+]);
 $enderecosSalvos = $stmtEnd->fetchAll(PDO::FETCH_ASSOC);
 
 define('STORE_URL', 'https://rs-beauty-store.com');

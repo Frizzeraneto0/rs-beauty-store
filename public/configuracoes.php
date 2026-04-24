@@ -26,12 +26,15 @@ function carregarEnderecos(PDO $db, string $userId): array {
         INNER JOIN (
             SELECT tipo_endereco_id, MAX(id) AS id
             FROM enderecos
-            WHERE usuario_id = :uid
+            WHERE usuario_id = :uid_sub
             GROUP BY tipo_endereco_id
         ) ult ON ult.id = e.id
-        WHERE e.usuario_id = :uid
+        WHERE e.usuario_id = :uid_out
     ");
-    $stmt->execute([':uid' => $userId]);
+    $stmt->execute([
+        ':uid_sub' => $userId,
+        ':uid_out' => $userId,
+    ]);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $byType = [];
     foreach ($rows as $r) {
